@@ -1,0 +1,4 @@
+{
+  "mongoURI": "mongodb+srv://thomasliedts:d21031958@cluster0-wmcc3.gcp.mongodb.net/test?retryWrites=true&w=majority",
+  "jwtSecret": "aloevera"
+}
