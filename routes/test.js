@@ -33,15 +33,16 @@ router.post(
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { jeu, test, note, type } = req.body;
+    const { jeu, text, note, type } = req.body;
 
     try {
       const newTest = new Test({
         jeu,
-        test,
+        text,
         note,
         type,
         user: req.user.id,
+        userName: req.user.name,
       });
 
       const test = await newTest.save();
@@ -58,14 +59,14 @@ router.post(
 // @desc Update test
 // @access Private
 router.put('/:id', auth, async (req, res) => {
-  const { jeu, test, note, type } = req.body;
+  const { jeu, text, note, type } = req.body;
 
   // Build test object
-  const contactFields = {};
-  if (jeu) contactFields.jeu = jeu;
-  if (test) contactFields.test = test;
-  if (note) contactFields.note = note;
-  if (type) contactFields.type = type;
+  const testFields = {};
+  if (jeu) testFields.jeu = jeu;
+  if (text) testFields.text = text;
+  if (note) testFields.note = note;
+  if (type) testFields.type = type;
 
   try {
     let test = await Test.findById(req.params.id);
