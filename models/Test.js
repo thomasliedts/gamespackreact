@@ -15,9 +15,9 @@ const TestSchema = mongoose.Schema({
     type: Number,
     required: true,
   },
-  user: {
+  gamer: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
+    ref: 'Gamer',
   },
 });
 

@@ -6,15 +6,15 @@ const config = require('config');
 const auth = require('../middleware/auth');
 const { check, validationResult } = require('express-validator');
 
-const User = require('../models/User');
+const Gamer = require('../models/Gamer');
 
 // @route GET api/auth
 // @desc Get logged in user
 // @access Private
 router.get('/', auth, async (req, res) => {
   try {
-    const user = await User.findById(req.user.id).select('-password');
-    res.json(user);
+    const gamer = await Gamer.findById(req.gamer.id).select('-password');
+    res.json(gamer);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
@@ -22,7 +22,7 @@ router.get('/', auth, async (req, res) => {
 });
 
 // @route POST api/auth
-// @desc Auth user & get token
+// @desc Auth gamer & get token
 // @access Public
 router.post(
   '/',
@@ -39,21 +39,21 @@ router.post(
     const { email, password } = req.body;
 
     try {
-      let user = await User.findOne({ email });
+      let gamer = await Gamer.findOne({ email });
 
-      if (!user) {
+      if (!gamer) {
         return res.status(400).json({ msg: 'Invalid Credentials' });
       }
 
-      const isMatch = await bcrypt.compare(password, user.password);
+      const isMatch = await bcrypt.compare(password, gamer.password);
 
       if (!isMatch) {
         return res.status(400).json({ msg: 'Invalid Credentials' });
       }
 
       const payload = {
-        user: {
-          id: user.id,
+        gamer: {
+          id: gamer.id,
         },
       };
 

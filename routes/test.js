@@ -3,7 +3,7 @@ const router = express.Router();
 const auth = require('../middleware/auth');
 const { check, validationResult } = require('express-validator');
 
-const User = require('../models/User');
+const Gamer = require('../models/Gamer');
 const Test = require('../models/Test');
 
 // @route GET api/tests
@@ -11,7 +11,7 @@ const Test = require('../models/Test');
 // @access Private
 router.get('/', auth, async (req, res) => {
   try {
-    const tests = await Test.find({ user: req.user.id }).sort({
+    const tests = await Test.find({ gamer: req.gamer.id }).sort({
       date: -1,
     });
     res.json(tests);
@@ -41,8 +41,8 @@ router.post(
         text,
         note,
         type,
-        user: req.user.id,
-        userName: req.user.name,
+        gamer: req.gamer.id,
+        gamerName: req.gamer.name,
       });
 
       const test = await newTest.save();
@@ -73,8 +73,8 @@ router.put('/:id', auth, async (req, res) => {
 
     if (!test) return res.status(404).send({ msg: 'Test not found' });
 
-    // Make sure user owns test
-    if (test.user.toString() !== req.user.id) {
+    // Make sure gamer owns test
+    if (test.gamer.toString() !== req.gamer.id) {
       return res.status(401).json({ msg: 'Not authorized' });
     }
 
@@ -101,7 +101,7 @@ router.delete('/:id', auth, async (req, res) => {
     if (!test) return res.status(404).send({ msg: 'Test not found' });
 
     // Make sure test owns contact
-    if (test.user.toString() !== req.user.id) {
+    if (test.gamer.toString() !== req.gamer.id) {
       return res.status(401).json({ msg: 'Not authorized' });
     }
 
