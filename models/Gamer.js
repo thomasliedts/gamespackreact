@@ -14,6 +14,9 @@ const GamerSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  admin: {
+    type: Boolean,
+  },
   date: {
     type: Date,
     default: Date.now,
