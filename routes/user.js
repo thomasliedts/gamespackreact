@@ -7,6 +7,7 @@ const config = require('config');
 const { check, validationResult } = require('express-validator');
 
 const Gamer = require('../models/Gamer');
+const Test = require('../models/Test');
 
 // @route POST api/gamers
 // @desc Register a gamer
@@ -73,10 +74,30 @@ router.post(
   }
 );
 
+// @route    GET api/user/me
+// @desc     Get current user
+// @access   Private
+router.get('/me/:id', auth, async (req, res) => {
+  try {
+    const gamer = await Gamer.findOne({
+      gamer: req.gamer._id,
+    }).populate('gamer', ['name']);
+
+    if (!gamer) {
+      return res.status(400).json({ msg: 'There is no gamer' });
+    }
+
+    res.json(gamer);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 // @route    GET api/gamer
 // @desc     Get current gamers
 // @access   Private
-router.get('/', async (req, res) => {
+router.get('/', auth, async (req, res) => {
   try {
     const gamer = await Gamer.find().populate('gamer', ['name']);
 
@@ -90,4 +111,44 @@ router.get('/', async (req, res) => {
     res.status(500).send('Server Error');
   }
 });
+
+// @route    GET api/profile/user/:user_id
+// @desc     Get profile by user ID
+// @access   Public
+// Dont work for now
+router.get('/user/:gamer_id', async (req, res) => {
+  try {
+    const gamer = await Gamer.findOne({
+      gamer: req.params.gamer_id,
+    }).populate('gamer', ['name']);
+
+    if (!gamer) return res.status(400).json({ msg: 'gamer not found' });
+
+    res.json(gamer);
+  } catch (err) {
+    console.error(err.message);
+    if (err.kind == 'ObjectId') {
+      return res.status(400).json({ msg: 'gamer not found' });
+    }
+    res.status(500).send('Server Error');
+  }
+});
+
+// @route    DELETE api/profile
+// @desc     Delete profile, user & posts
+// @access   Private
+router.delete('/', auth, async (req, res) => {
+  try {
+    // Remove user posts
+    await Test.deleteMany({ gamer: req.gamer.id });
+    // Remove gamer
+    await Gamer.findOneAndRemove({ _id: req.gamer.id });
+
+    res.json({ msg: 'Gamer deleted' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 module.exports = router;
