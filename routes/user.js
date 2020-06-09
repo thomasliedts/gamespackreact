@@ -7,7 +7,7 @@ const config = require('config');
 const { check, validationResult } = require('express-validator');
 
 const Gamer = require('../models/Gamer');
-const Test = require('../models/Test');
+const Games = require('../models/Games');
 
 // @route POST api/gamers
 // @desc Register a gamer
@@ -140,7 +140,7 @@ router.get('/user/:gamer_id', async (req, res) => {
 router.delete('/', auth, async (req, res) => {
   try {
     // Remove user posts
-    await Test.deleteMany({ gamer: req.gamer.id });
+    await Games.deleteMany({ gamer: req.gamer.id });
     // Remove gamer
     await Gamer.findOneAndRemove({ _id: req.gamer.id });
 

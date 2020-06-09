@@ -4,17 +4,17 @@ const auth = require('../middleware/auth');
 const { check, validationResult } = require('express-validator');
 
 const Gamer = require('../models/Gamer');
-const Test = require('../models/Test');
+const Games = require('../models/Games');
 
 // @route GET api/tests
 // @desc Get all users tests
 // @access Private
 router.get('/', auth, async (req, res) => {
   try {
-    const tests = await Test.find({ gamer: req.gamer.id }).sort({
+    const games = await Games.find({ gamer: req.gamer.id }).sort({
       date: -1,
     });
-    res.json(tests);
+    res.json(games);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
@@ -26,28 +26,83 @@ router.get('/', auth, async (req, res) => {
 // @access Private
 router.post(
   '/',
-  [auth, [check('jeu', 'Game is required').not().isEmpty()]],
+  [
+    auth,
+    [
+      check('jeu', 'Game is required').not().isEmpty(),
+      check('genre', 'Definir le genre du jeu').not().isEmpty(),
+      check('plateforms', 'Definir les plateformes sur lequel le jeu est sorti')
+        .not()
+        .isEmpty(),
+    ],
+  ],
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).json({ errors: errors.array() });
     }
 
-    const { jeu, text, note, type } = req.body;
+    const { jeu, genre, plateforms } = req.body;
 
     try {
-      const newTest = new Test({
-        jeu,
-        text,
-        note,
-        type,
+      const gamer = await Gamer.findById(req.gamer.id).select('-password');
+
+      if (!gamer.admin) {
+        return res.json({ msg: 'Tu ne peux pas publier de jeu' });
+      } else {
+        const newGames = new Games({
+          jeu,
+          genre,
+          plateforms,
+          gamer: req.gamer.id,
+        });
+
+        const game = await newGames.save();
+
+        res.json(game);
+      }
+    } catch (err) {
+      console.error(err.message);
+      res.status(500).send('Server Error');
+    }
+  }
+);
+
+// @route PUT api/games/tests/:id
+// @desc Update test
+// @access Private
+router.put(
+  '/tests/:id',
+  [
+    auth,
+    [
+      check('text', 'Text is required').not().isEmpty(),
+      check('note', 'Note is required').not().isEmpty(),
+    ],
+  ],
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    try {
+      const gamer = await (await Gamer.findById(req.gamer.id)).isSelected(
+        '-password'
+      );
+      const games = await Games.findById(req.params.id);
+
+      const newTest = {
+        text: req.body.text,
+        note: req.body.note,
+        name: gamer.name,
         gamer: req.gamer.id,
-        gamerName: req.gamer.name,
-      });
+      };
+      games.tests.unshift(newTest);
 
-      const test = await newTest.save();
+      await games.save();
 
-      res.json(test);
+      res.json(games.tests);
     } catch (err) {
       console.error(err.message);
       res.status(500).send('Server Error');
@@ -59,32 +114,31 @@ router.post(
 // @desc Update test
 // @access Private
 router.put('/:id', auth, async (req, res) => {
-  const { jeu, text, note, type } = req.body;
+  const { jeu, genre, plateforms } = req.body;
 
   // Build test object
-  const testFields = {};
-  if (jeu) testFields.jeu = jeu;
-  if (text) testFields.text = text;
-  if (note) testFields.note = note;
-  if (type) testFields.type = type;
+  const gameFields = {};
+  if (jeu) gameFields.jeu = jeu;
+  if (genre) gameFields.genre = genre;
+  if (plateforms) gameFields.plateforms = plateforms;
 
   try {
-    let test = await Test.findById(req.params.id);
+    let game = await Games.findById(req.params.id);
 
-    if (!test) return res.status(404).send({ msg: 'Test not found' });
+    if (!game) return res.status(404).send({ msg: 'game not found' });
 
-    // Make sure gamer owns test
-    if (test.gamer.toString() !== req.gamer.id) {
+    // Make sure gamer owns game
+    if (game.gamer.toString() !== req.gamer.id) {
       return res.status(401).json({ msg: 'Not authorized' });
     }
 
-    test = await Test.findByIdAndUpdate(
+    game = await Games.findByIdAndUpdate(
       req.params.id,
-      { $set: testFields },
+      { $set: gameFields },
       { new: true }
     );
 
-    res.json(test);
+    res.json(game);
   } catch (err) {
     console.error(err.message);
     res.status(500).send('Server Error');
@@ -96,16 +150,16 @@ router.put('/:id', auth, async (req, res) => {
 // @access Private
 router.delete('/:id', auth, async (req, res) => {
   try {
-    let test = await Test.findById(req.params.id);
+    let game = await Games.findById(req.params.id);
 
-    if (!test) return res.status(404).send({ msg: 'Test not found' });
+    if (!game) return res.status(404).send({ msg: 'game not found' });
 
     // Make sure test owns contact
-    if (test.gamer.toString() !== req.gamer.id) {
+    if (game.gamer.toString() !== req.gamer.id) {
       return res.status(401).json({ msg: 'Not authorized' });
     }
 
-    await Test.findByIdAndRemove(req.params.id);
+    await Games.findByIdAndRemove(req.params.id);
 
     res.json({ msg: 'Test removed' });
   } catch (err) {
