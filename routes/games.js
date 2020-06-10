@@ -21,7 +21,7 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// @route POST api/tests
+// @route POST api/games
 // @desc Add new test
 // @access Private
 router.post(

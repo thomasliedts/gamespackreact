@@ -94,24 +94,6 @@ router.get('/me/:id', auth, async (req, res) => {
   }
 });
 
-// @route    GET api/gamer
-// @desc     Get current gamers
-// @access   Private
-router.get('/', auth, async (req, res) => {
-  try {
-    const gamer = await Gamer.find().populate('gamer', ['name']);
-
-    if (!gamer) {
-      return res.status(400).json({ msg: 'There is no gamer for this gamer' });
-    }
-
-    res.json(gamer);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
-
 // @route    GET api/profile/user/:user_id
 // @desc     Get profile by user ID
 // @access   Public
