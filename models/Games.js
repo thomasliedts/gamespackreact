@@ -8,6 +8,7 @@ const GamesSchema = mongoose.Schema({
   jeu: {
     type: String,
     required: true,
+    unique: true,
   },
   genre: {
     type: String,

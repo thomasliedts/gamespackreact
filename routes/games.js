@@ -21,53 +21,6 @@ router.get('/', auth, async (req, res) => {
   }
 });
 
-// @route POST api/games
-// @desc Add new test
-// @access Private
-router.post(
-  '/',
-  [
-    auth,
-    [
-      check('jeu', 'Game is required').not().isEmpty(),
-      check('genre', 'Definir le genre du jeu').not().isEmpty(),
-      check('plateforms', 'Definir les plateformes sur lequel le jeu est sorti')
-        .not()
-        .isEmpty(),
-    ],
-  ],
-  async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { jeu, genre, plateforms } = req.body;
-
-    try {
-      const gamer = await Gamer.findById(req.gamer.id).select('-password');
-
-      if (!gamer.admin) {
-        return res.json({ msg: 'Tu ne peux pas publier de jeu' });
-      } else {
-        const newGames = new Games({
-          jeu,
-          genre,
-          plateforms,
-          gamer: req.gamer.id,
-        });
-
-        const game = await newGames.save();
-
-        res.json(game);
-      }
-    } catch (err) {
-      console.error(err.message);
-      res.status(500).send('Server Error');
-    }
-  }
-);
-
 // @route PUT api/games/tests/:id
 // @desc Update test
 // @access Private
