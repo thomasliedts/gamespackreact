@@ -122,7 +122,7 @@ router.get('/user/:gamer_id', async (req, res) => {
 router.delete('/', auth, async (req, res) => {
   try {
     // Remove user posts
-    await Games.deleteMany({ gamer: req.gamer.id });
+    // await Games.deleteMany({ gamer: req.gamer.id });
     // Remove gamer
     await Gamer.findOneAndRemove({ _id: req.gamer.id });
 

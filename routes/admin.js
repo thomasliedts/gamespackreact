@@ -79,4 +79,71 @@ router.post(
   }
 );
 
+// @route PUT api/tests/:id
+// @desc Update test
+// @access Private
+router.put('/:id', auth, async (req, res) => {
+  const { jeu, genre, plateforms } = req.body;
+
+  // Build test object
+  const gameFields = {};
+  if (jeu) gameFields.jeu = jeu;
+  if (genre) gameFields.genre = genre;
+  if (plateforms) gameFields.plateforms = plateforms;
+
+  try {
+    let game = await Games.findById(req.params.id);
+    const gamer = await Gamer.findById(req.gamer.id).select('-password');
+    if (!gamer.admin) {
+      return res.json({ msg: 'Tu ne peux pas mettre à jour le jeu' });
+    } else {
+      if (!game) return res.status(404).send({ msg: 'game not found' });
+
+      // Make sure gamer owns game
+      if (game.gamer.toString() !== req.gamer.id) {
+        return res.status(401).json({ msg: 'Not authorized' });
+      }
+
+      game = await Games.findByIdAndUpdate(
+        req.params.id,
+        { $set: gameFields },
+        { new: true }
+      );
+
+      res.json(game);
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+//Delete a test
+
+router.delete('/:id/:test_id', auth, async (req, res) => {
+  try {
+    const gamer = await Gamer.findById(req.gamer.id).select('-password');
+
+    if (!gamer.admin) {
+      return res.json({ msg: 'Tu ne peux pas supprimer ce test' });
+    } else {
+      let game = await Games.findById(req.params.id);
+
+      const test = game.tests.find((test) => test.id === req.params.test_id);
+      console.log(test);
+      if (!test) return res.status(404).send({ msg: 'test not found' });
+
+      //  Get remove index
+      const removeIndex = game.tests.map((test) => test.toString()).indexOf();
+      game.tests.splice(removeIndex, 1);
+
+      await game.save();
+
+      res.json({ msg: 'Test removed' });
+    }
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+});
+
 module.exports = router;

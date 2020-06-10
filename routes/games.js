@@ -6,14 +6,12 @@ const { check, validationResult } = require('express-validator');
 const Gamer = require('../models/Gamer');
 const Games = require('../models/Games');
 
-// @route GET api/tests
+// @route GET api/games
 // @desc Get all users tests
 // @access Private
-router.get('/', auth, async (req, res) => {
+router.get('/', async (req, res) => {
   try {
-    const games = await Games.find({ gamer: req.gamer.id }).sort({
-      date: -1,
-    });
+    const games = await Games.find();
     res.json(games);
   } catch (err) {
     console.error(err.message);
@@ -63,45 +61,10 @@ router.put(
   }
 );
 
-// @route PUT api/tests/:id
-// @desc Update test
-// @access Private
-router.put('/:id', auth, async (req, res) => {
-  const { jeu, genre, plateforms } = req.body;
-
-  // Build test object
-  const gameFields = {};
-  if (jeu) gameFields.jeu = jeu;
-  if (genre) gameFields.genre = genre;
-  if (plateforms) gameFields.plateforms = plateforms;
-
-  try {
-    let game = await Games.findById(req.params.id);
-
-    if (!game) return res.status(404).send({ msg: 'game not found' });
-
-    // Make sure gamer owns game
-    if (game.gamer.toString() !== req.gamer.id) {
-      return res.status(401).json({ msg: 'Not authorized' });
-    }
-
-    game = await Games.findByIdAndUpdate(
-      req.params.id,
-      { $set: gameFields },
-      { new: true }
-    );
-
-    res.json(game);
-  } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server Error');
-  }
-});
-
-// @route DELETE api/tests/:id
+// @route DELETE api/gazmes/:id
 // @desc Delete test
 // @access Private
-router.delete('/:id', auth, async (req, res) => {
+router.delete('/tests/:id/:comment_id', auth, async (req, res) => {
   try {
     let game = await Games.findById(req.params.id);
 
