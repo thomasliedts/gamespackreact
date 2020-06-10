@@ -129,7 +129,7 @@ router.delete('/:id/:test_id', auth, async (req, res) => {
       let game = await Games.findById(req.params.id);
 
       const test = game.tests.find((test) => test.id === req.params.test_id);
-      console.log(test);
+
       if (!test) return res.status(404).send({ msg: 'test not found' });
 
       //  Get remove index
