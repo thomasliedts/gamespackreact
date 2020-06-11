@@ -61,21 +61,29 @@ router.put(
   }
 );
 
-// @route DELETE api/gazmes/:id
+// @route DELETE api/games/:id
 // @desc Delete test
 // @access Private
-router.delete('/tests/:id/:comment_id', auth, async (req, res) => {
+router.delete('/tests/:id/:test_id', auth, async (req, res) => {
   try {
     let game = await Games.findById(req.params.id);
 
-    if (!game) return res.status(404).send({ msg: 'game not found' });
+    const test = game.tests.find((test) => test.id === req.params.test_id);
 
-    // Make sure test owns contact
-    if (game.gamer.toString() !== req.gamer.id) {
-      return res.status(401).json({ msg: 'Not authorized' });
+    if (!test) return res.status(404).send({ msg: 'test not found' });
+
+    // Check gamer
+    if (test.gamer.toString() !== req.gamer.id) {
+      return res.status(401).json({ msg: 'Gamer not authorized' });
     }
 
-    await Games.findByIdAndRemove(req.params.id);
+    //  Get remove index
+    const removeIndex = game.tests
+      .map((test) => test.toString())
+      .indexOf(req.gamer.id);
+    game.tests.splice(removeIndex, 1);
+
+    await game.save();
 
     res.json({ msg: 'Test removed' });
   } catch (err) {
