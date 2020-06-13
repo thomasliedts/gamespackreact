@@ -1,5 +1,5 @@
 import React, { Fragment, useEffect } from 'react';
-import './App.css';
+import './App.scss';
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './store';
@@ -13,17 +13,19 @@ const App = () => {
   // }, []);
 
   return (
-    <Provider store={store}>
-      <Router>
-        <Fragment>
-          <Navbar />
-          <Switch>
-            <Route exact path='/' component={Home} />
-            <Route component={Routes} />
-          </Switch>
-        </Fragment>
-      </Router>
-    </Provider>
+    <div className='container'>
+      <Provider store={store}>
+        <Router>
+          <Fragment>
+            <Navbar />
+            <Switch>
+              <Route exact path='/' component={Home} />
+              <Route component={Routes} />
+            </Switch>
+          </Fragment>
+        </Router>
+      </Provider>
+    </div>
   );
 };
 
