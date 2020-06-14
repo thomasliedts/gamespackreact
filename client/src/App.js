@@ -13,19 +13,17 @@ const App = () => {
   // }, []);
 
   return (
-    <div className='container'>
-      <Provider store={store}>
-        <Router>
-          <Fragment>
-            <Navbar />
-            <Switch>
-              <Route exact path='/' component={Home} />
-              <Route component={Routes} />
-            </Switch>
-          </Fragment>
-        </Router>
-      </Provider>
-    </div>
+    <Provider store={store}>
+      <Router>
+        <Fragment>
+          <Navbar />
+          <Switch>
+            <Route exact path='/' component={Home} />
+            <Route component={Routes} />
+          </Switch>
+        </Fragment>
+      </Router>
+    </Provider>
   );
 };
 
