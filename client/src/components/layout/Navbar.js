@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   return (
-    <nav className='navbar navbar-expand-lg navbar-light bg-light'>
+    <nav className='navbar navbar-expand-lg navbar-light bg-light '>
       <Link className='navbar-brand' to='/'>
         GamesPack
       </Link>
@@ -20,7 +20,7 @@ const Navbar = () => {
       </button>
 
       <div className='collapse navbar-collapse' id='navbarSupportedContent'>
-        <ul className='navbar-nav mr-auto mx-auto '>
+        <ul className='navbar-nav mr-auto mx-auto  '>
           <li className='nav-item '>
             <Link className='nav-link' to='/login'>
               Connexion
