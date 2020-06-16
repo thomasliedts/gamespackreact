@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import store from './store';
 import Routes from './components/routing/Routes';
 import Navbar from './components/layout/Navbar';
+import Footer from './components/layout/Footer';
 import Home from './components/pages/Home';
 import { loadUser } from './actions/auth';
 import setAuthToken from './utils/setAuthToken';
@@ -27,6 +28,7 @@ const App = () => {
             <Route exact path='/' component={Home} />
             <Route component={Routes} />
           </Switch>
+          <Footer />
         </Fragment>
       </Router>
     </Provider>

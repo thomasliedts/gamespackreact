@@ -9,6 +9,11 @@ const Navbar = ({ logout, auth: { isAuthenticated, loading, user } }) => {
     <div className='collapse navbar-collapse' id='navbarSupportedContent'>
       <ul className='navbar-nav mr-auto mx-auto  '>
         <li className='nav-item '>
+          <Link className='nav-link' to='/games'>
+            Jeux
+          </Link>
+        </li>
+        <li className='nav-item '>
           <Link className='nav-link' to='/dashboard'>
             Dashboard
           </Link>
@@ -26,6 +31,11 @@ const Navbar = ({ logout, auth: { isAuthenticated, loading, user } }) => {
     <div className='collapse navbar-collapse' id='navbarSupportedContent'>
       <ul className='navbar-nav mr-auto mx-auto  '>
         <li className='nav-item '>
+          <Link className='nav-link' to='/games'>
+            Jeux
+          </Link>
+        </li>
+        <li className='nav-item '>
           <Link className='nav-link' to='/login'>
             Connexion
           </Link>
@@ -40,7 +50,7 @@ const Navbar = ({ logout, auth: { isAuthenticated, loading, user } }) => {
   );
 
   return (
-    <nav className='navbar navbar-expand-lg navbar-light bg-light '>
+    <nav className='navbar navbar-expand-lg navbar-dark bg-dark header '>
       <Link className='navbar-brand' to='/'>
         GamesPack
       </Link>

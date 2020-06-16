@@ -8,6 +8,7 @@ import DashboardAdmin from '../admin/DashboardAdmin';
 import Dashboard from '../pages/Dashboard';
 import PrivateRoute from '../routing/PrivateRoute';
 import AdminRoute from '../routing/AdminRoute';
+import Games from '../pages/Games';
 
 const Routes = () => {
   return (
@@ -17,6 +18,7 @@ const Routes = () => {
         <Route exact path='/about' component={About} />
         <Route exact path='/login' component={Login} />
         <Route exact path='/register' component={Register} />
+        <Route exact path='/games' component={Games} />
         <AdminRoute exact path='/admin' component={DashboardAdmin} />
         <PrivateRoute exact path='/dashboard' component={Dashboard} />
       </Switch>
